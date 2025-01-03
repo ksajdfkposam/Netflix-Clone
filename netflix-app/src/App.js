@@ -9,6 +9,7 @@ import Banner from './Component/Banner';
 import Login from './Component/Login';
 import List from './Component/List';
 import HLog from './Component/HLog';
+import Forget from './Component/Forget';
 
 import './App.scss';
 
@@ -27,7 +28,7 @@ function App() {
         <Route path="/" element={
           <React.Fragment>
             
-           {console.log("billa")}
+          
             <Home/>
           </React.Fragment>
         }/>
@@ -36,7 +37,7 @@ function App() {
 
         <Route path="/login" element={
           <React.Fragment>
-              {console.log("billa2")}
+              
             <HLog/>
             <Login title={true} tit="Login"/>
           </React.Fragment>
@@ -46,7 +47,7 @@ function App() {
 
          <Route path="/register" element={
           <React.Fragment>
-              {console.log("billa3")}
+           
             <HLog/>
             <Login title={false} tit={"Register"}/>
           </React.Fragment>
@@ -57,6 +58,14 @@ function App() {
             
             <Banner/>
             
+          </React.Fragment>
+        }/>
+
+<Route path="/forget-pass" element={
+          <React.Fragment>
+           
+            <HLog/>
+            <Forget/>
           </React.Fragment>
         }/>
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Home = () => {
     return (
@@ -11,8 +12,9 @@ const Home = () => {
           <p className="email-form-title">Ready to watch? Enter your email to create or restart your membership.</p>
           <div className="input-group">
             <input type="text" className="form-control" placeholder="Email Address" />
-            <button className="input-group-button btn-danger text-white">Get Started</button>
-          </div>
+             <Link to="/login"  className="text-white-50 fw-bold"><button className="input-group-button btn-danger text-white">Get Started</button>
+             </Link>
+             </div>
           
         </div>
         <div className="shadow"></div>

@@ -2,16 +2,17 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
 import { firebaseConfig } from './firebaseCon.js' ;
-import { getAuth, 
-  signInWithEmailAndPassword,createUserWithEmailAndPassword
-} from "firebase/auth";
-import { useEffect, useState } from "react";
+import { getAuth,signInWithEmailAndPassword,createUserWithEmailAndPassword,sendEmailVerification} from "firebase/auth";
+import {useState} from "react";
+
+
 
 console.log(firebaseConfig)
 
 const Login = ({title,tit}) => {
+
   const t="Sign-In";
-  console.log(tit,"tits")
+ 
   initializeApp(firebaseConfig);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,24 +20,32 @@ const Login = ({title,tit}) => {
 
   const [ isEmailUsed, setIsEmailUsed] = useState(false);
   const auth = getAuth();
+ 
 
 
 const clickEmail=(e)=>{
   setEmail(e.target.value)
+    
+    
+};
+  
 
-}
-console.log(email)
+
+
 
 const clickPass=(e)=>{
   setPassword(e.target.value)
 }
 
-console.log(password)
+
 
 
 
   const navigate=useNavigate();
-const clickOn=(e)=>{
+
+const clickOn= async (e)=>{
+
+  e.preventDefault();
   if(title===true){
 signInWithEmailAndPassword(auth,email,password)
 .then(auth=>{
@@ -49,17 +58,37 @@ signInWithEmailAndPassword(auth,email,password)
  // navigate('/dashboard');
 }
 else{
-  console.log(auth,"authkk")
-    createUserWithEmailAndPassword(auth, email, password)
-    .then(
-      auth => {
-        if(auth){
-          navigate('/dashboard');
-        }
-      })
-      .catch( error => setIsEmailUsed(true));
-  
+
+
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // Send email verification
+        await sendEmailVerification(user);
+        console.log("Verification email sent!");
+
+        alert("Registration successful! Please verify your email.");
+        navigate('/dashboard');
+        setEmail('');
+        setPassword(''); 
+    } catch (error) {
+        console.error("Error during registration:", error.message);
+        alert(error.message);
+    }
+
+      
+   
 }
+}
+
+
+
+
+const forgetPass=(e)=>{
+  e.preventDefault();
+  navigate('/forget-pass');
+
 }
 
 
@@ -88,9 +117,9 @@ else{
 
               <h2 className="fw-bold mb-2 text-uppercase">{tit}</h2>
               <p className="text-white-50 mb-5">Please enter your login and password!</p>
-
+            
               <div className="form-outline form-white mb-4">
-                <input type="email" id="typeEmailX" className="form-control form-control-lg" value={email} onChange={clickEmail}/>
+                <input type="email" id="typeEmailX"  className="form-control form-control-lg" value={email} onChange={clickEmail}/>
                 <label className="form-label">Email</label>
               </div>
 
@@ -99,13 +128,13 @@ else{
                 <label className="form-label" >Password</label>
               </div>
  
- {title===true && user && <p className=''>User Does Not Exist</p>}
-              { title===true && <p  className="small mb-2 pb-lg-2"><a className="text-white-50" href="#!">Forgot password?</a></p>}
+ {title===true && user && <p className='bg-primary'>User Does Not Exist</p>}
+              { title===true && <p  className="small mb-2 pb-lg-2" onClick={forgetPass}><a className="text-white-50" href="#!">Forgot password?</a></p>}
               {title===false && isEmailUsed && <p className=''>Account already exists</p>}
               <button className="btn btn-outline-light btn-lg px-5" type="submit"  onClick={clickOn} >{(title)?"Login":t}</button>
+           
               
-              
-
+            
             </div>
 
             <div>
@@ -124,5 +153,6 @@ else{
         </div>
     );
 };
+
 
 export default Login;
